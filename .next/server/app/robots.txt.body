@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://your-autorank-domain.vercel.app/sitemap.xml
