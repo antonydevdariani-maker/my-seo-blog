@@ -1,7 +1,8 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/sitemap.xml/route": "app/sitemap.xml/route.js",
   "/robots.txt/route": "app/robots.txt/route.js",
-  "/blog/[slug]/page": "app/blog/[slug]/page.js",
-  "/page": "app/page.js"
+  "/sitemap.xml/route": "app/sitemap.xml/route.js",
+  "/tag/[tag]/page": "app/tag/[tag]/page.js",
+  "/page": "app/page.js",
+  "/blog/[slug]/page": "app/blog/[slug]/page.js"
 }

@@ -2,7 +2,9 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { MDXRemote } from 'next-mdx-remote/rsc'
-import { getAllSlugs, getArticleBySlug } from '@/lib/articles'
+import { getAllSlugs, getArticleBySlug, getRelatedArticles } from '@/lib/articles'
+import RelatedArticles from '@/components/RelatedArticles'
+import TagPills from '@/components/TagPills'
 
 interface Props {
   params: { slug: string }
@@ -25,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: article.description,
       type: 'article',
       publishedTime: article.date,
-      tags: article.keywords,
+      tags: article.tags.length ? article.tags : article.keywords,
     },
     twitter: {
       card: 'summary_large_image',
@@ -49,6 +51,8 @@ export default function ArticlePage({ params }: Props) {
 
   if (!article) notFound()
 
+  const related = getRelatedArticles(article.slug, article.tags, 3)
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -63,7 +67,7 @@ export default function ArticlePage({ params }: Props) {
       '@type': 'Organization',
       name: 'AutoRank',
     },
-    keywords: article.keywords.join(', '),
+    keywords: [...article.tags, ...article.keywords].join(', '),
   }
 
   return (
@@ -103,18 +107,7 @@ export default function ArticlePage({ params }: Props) {
 
           <p className="text-lg text-gray-400 leading-relaxed">{article.description}</p>
 
-          {article.keywords.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-6">
-              {article.keywords.map((kw) => (
-                <span
-                  key={kw}
-                  className="text-xs font-medium px-3 py-1 rounded-full bg-red-600/10 border border-red-600/20 text-red-400 uppercase tracking-wider"
-                >
-                  {kw}
-                </span>
-              ))}
-            </div>
-          )}
+          <TagPills tags={article.tags} className="mt-6" />
         </header>
 
         <hr className="border-white/10 mb-10" />
@@ -133,6 +126,8 @@ export default function ArticlePage({ params }: Props) {
           prose-pre:bg-[#111111] prose-pre:border prose-pre:border-white/10">
           <MDXRemote source={article.content} />
         </article>
+
+        <RelatedArticles articles={related} />
 
         {/* Footer CTA */}
         <div className="mt-16 p-8 bg-[#111111] border border-white/10 rounded-xl text-center">

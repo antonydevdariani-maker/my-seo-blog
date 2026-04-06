@@ -1,16 +1,24 @@
 import type { MetadataRoute } from 'next'
-import { getAllArticles } from '@/lib/articles'
+import { getAllArticles, getAllTagSlugs } from '@/lib/articles'
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://your-autorank-domain.vercel.app'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const articles = getAllArticles()
+  const tagSlugs = getAllTagSlugs()
 
   const articleEntries: MetadataRoute.Sitemap = articles.map((article) => ({
     url: `${BASE_URL}/blog/${article.slug}`,
     lastModified: article.date ? new Date(article.date) : new Date(),
     changeFrequency: 'monthly',
     priority: 0.8,
+  }))
+
+  const tagEntries: MetadataRoute.Sitemap = tagSlugs.map((tag) => ({
+    url: `${BASE_URL}/tag/${tag}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly',
+    priority: 0.65,
   }))
 
   return [
@@ -21,5 +29,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     ...articleEntries,
+    ...tagEntries,
   ]
 }
